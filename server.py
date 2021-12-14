@@ -3,6 +3,7 @@ from flask_bootstrap import Bootstrap
 from forms import RegisterForm, LoginForm, CreatePostForm, CommentForm
 from flask_sqlalchemy import SQLAlchemy
 import smtplib
+import os
 import requests
 from flask_ckeditor import CKEditor
 from flask_nav import Nav
@@ -14,7 +15,7 @@ from datetime import date
 from functools import wraps
 from flask_gravatar import Gravatar
 
-themealdb_endpoint = "https://www.themealdb.com/api/json/v1/1/search.php"
+themealdb_endpoint = os.environ.get("THEMEALDB_ENDPOINT")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'any_random_key'
@@ -115,20 +116,6 @@ def navbar():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        phone = request.form['phone']
-        message = request.form['message']
-        with smtplib.SMTP('smtp.gmail.com') as connection:
-            connection.starttls()
-            connection.login(user='danialkarimi492@gmail.com', password='Danial147258369')
-            connection.sendmail(
-                from_addr='danialkarimi492@gmail.com',
-                to_addrs='danialkarimi492@gmail.com',
-                msg=f'Subject:New Message\n\nName: {name}\nPhone: {phone}\nEmail: {email}\nMessage: {message}'
-            )
-            return render_template('contact.html', msg=True)
     return render_template('contact.html', msg=False)
 
 
